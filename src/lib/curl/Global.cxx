@@ -112,6 +112,7 @@ CurlSocket::SocketFunction(gcc_unused CURL *easy,
 			   void *userp, void *socketp) noexcept {
 	auto &global = *(CurlGlobal *)userp;
 	CurlSocket *cs = (CurlSocket *)socketp;
+	fprintf(stderr, "CurlSocket::SocketFunction s=%d action=%d userp=%p socketp=%p\n", int(s), action, userp, socketp);
 
 	assert(global.GetEventLoop().IsInside());
 
@@ -124,6 +125,7 @@ CurlSocket::SocketFunction(gcc_unused CURL *easy,
 		cs = new CurlSocket(global, global.GetEventLoop(),
 				    SocketDescriptor(s));
 		global.Assign(s, *cs);
+		fprintf(stderr, "  Assign %p\n", cs);
 	} else {
 #ifdef USE_EPOLL
 		/* when using epoll, we need to unregister the socket
